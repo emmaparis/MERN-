@@ -11,14 +11,22 @@ const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [loginUser, { error }] = useMutation(LOGIN_USER);
 
-  const handleInputChange = (event) => {
+ useEffect(() => {
+    if (error) {
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
+    }
+  }, [error]);
+
+  const handleInputChange = async (event) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
-  };
 
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
+    const handleFormSubmit = async (event) => {
+      event.preventDefault();
 
     // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
@@ -28,17 +36,7 @@ const LoginForm = () => {
     }
 
     try {
-      const { data } = await loginUser({
-        variables: { ...userFormData },
-      })
-     
-        Auth.login(data.login.token);
-        } catch (err) {
-            console.error(err);
-            setShowAlert(true);
-        }
-    };
-    
+      const response = await loginUser(userFormData);
 
       if (!response.ok) {
         throw new Error('something went wrong!');
@@ -57,7 +55,8 @@ const LoginForm = () => {
       email: '',
       password: '',
     });
-  };
+  
+
 
   return (
     <>
@@ -99,6 +98,6 @@ const LoginForm = () => {
       </Form>
     </>
   );
-};
+
 
 export default LoginForm;
