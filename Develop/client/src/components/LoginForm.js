@@ -12,6 +12,7 @@ const LoginForm = () => {
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [loginUser, { error }] = useMutation(LOGIN_USER);
+};
 
  useEffect(() => {
     if (error) {
@@ -24,9 +25,11 @@ const LoginForm = () => {
   const handleInputChange = async (event) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
+  };
 
     const handleFormSubmit = async (event) => {
       event.preventDefault();
+    };
 
     // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
