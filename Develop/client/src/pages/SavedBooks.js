@@ -10,9 +10,13 @@ import {
 import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
+import { useMutation } from '@apollo/client';
+import { REMOVE_BOOK } from '../utils/mutations';
+import { useQuery } from '@apollo/client';
 
 const SavedBooks = () => {
-  const [userData, setUserData] = useState({});
+  const { loading, data } = useQuery(getMe);
+  const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
   // use this to determine if `useEffect()` hook needs to run again
   const userDataLength = Object.keys(userData).length;
@@ -51,12 +55,13 @@ const SavedBooks = () => {
     }
 
     try {
-      const response = await deleteBook(bookId, token);
+      const response = await deleteBook({varisbles: {bookId}});
+      console.log(response)
 
-      if (!response.ok) {
+      if (error) {
         throw new Error('something went wrong!');
       }
-
+  
       const updatedUser = await response.json();
       setUserData(updatedUser);
       // upon success, remove book's id from localStorage
@@ -65,6 +70,7 @@ const SavedBooks = () => {
       console.error(err);
     }
   };
+
 
   // if data isn't here yet, say so
   if (!userDataLength) {
